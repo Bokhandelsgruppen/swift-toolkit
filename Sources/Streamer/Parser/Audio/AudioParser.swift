@@ -52,17 +52,19 @@ public final class AudioParser: PublicationParser {
         
         // Checks if the fetcher contains only bitmap-based resources.
         return !fetcher.links.isEmpty
-            && fetcher.links.allSatisfy { ignores($0) || $0.mediaType.isAudio }
+        && fetcher.links.allSatisfy { ignores($0) || $0.mediaType.isAudio }
     }
     
     private func ignores(_ link: Link) -> Bool {
         let url = URL(fileURLWithPath: link.href)
         let filename = url.lastPathComponent
         let allowedExtensions = ["asx", "bio", "m3u", "m3u8", "pla", "pls", "smil", "txt", "vlc", "wpl", "xspf", "zpl"]
+        let ignoredFileExtensions = ["pdf"]
         
         return allowedExtensions.contains(url.pathExtension.lowercased())
-            || filename.hasPrefix(".")
-            || filename == "Thumbs.db"
+        || ignoredFileExtensions.contains(url.pathExtension.lowercased())
+        || filename.hasPrefix(".")
+        || filename == "Thumbs.db"
     }
     
     @available(*, unavailable, message: "Not supported for `AudioParser`")

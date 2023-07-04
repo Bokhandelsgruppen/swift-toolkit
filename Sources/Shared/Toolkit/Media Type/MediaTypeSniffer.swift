@@ -311,6 +311,10 @@ public extension MediaType {
         "asx", "bio", "m3u", "m3u8", "pla", "pls", "smil", "vlc", "wpl", "xspf", "zpl"
     ]
     
+    private static let ignoringFileExtensions = [
+        "pdf"
+    ]
+    
     /// Sniffs a simple archive-based format, like Comic Book Archive or Zipped Audio Book.
     /// Reference: https://wiki.mobileread.com/wiki/CBR_and_CBZ
     private static func sniffArchive(context: MediaTypeSnifferContext) -> MediaType? {
@@ -322,14 +326,14 @@ public extension MediaType {
         }
         
         if context.contentAsArchive != nil {
-            func isIgnored(_ url: URL, fileExtensions: [String]) -> Bool {
+            func isIgnored(_ url: URL) -> Bool {
                 let filename = url.lastPathComponent
-                return url.hasDirectoryPath || filename.hasPrefix(".") || filename == "Thumbs.db" || !fileExtensions.contains(url.pathExtension)
+                return url.hasDirectoryPath || filename.hasPrefix(".") || filename == "Thumbs.db" || ignoringFileExtensions.contains(url.pathExtension.lowercased())
             }
 
             func archiveContainsOnlyExtensions(_ fileExtensions: [String]) -> Bool {
                 return context.archiveEntriesAllSatisfy { url in
-                    isIgnored(url, fileExtensions: fileExtensions) || fileExtensions.contains(url.pathExtension.lowercased())
+                    isIgnored(url) || fileExtensions.contains(url.pathExtension.lowercased())
                 }
             }
 
