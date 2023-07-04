@@ -311,7 +311,7 @@ public extension MediaType {
         "asx", "bio", "m3u", "m3u8", "pla", "pls", "smil", "vlc", "wpl", "xspf", "zpl"
     ]
     
-    private static let ignoringFileExtensions = [
+    private static let ignoredFileExtensions = [
         "pdf"
     ]
     
@@ -328,7 +328,11 @@ public extension MediaType {
         if context.contentAsArchive != nil {
             func isIgnored(_ url: URL) -> Bool {
                 let filename = url.lastPathComponent
-                return url.hasDirectoryPath || filename.hasPrefix(".") || filename == "Thumbs.db" || ignoringFileExtensions.contains(url.pathExtension.lowercased())
+                let fileExtension = url.pathExtension.lowercased()
+                return url.hasDirectoryPath
+                    || filename.hasPrefix(".")
+                    || filename == "Thumbs.db"
+                    || ignoredFileExtensions.contains(fileExtension) // For archives containing PDF files.
             }
 
             func archiveContainsOnlyExtensions(_ fileExtensions: [String]) -> Bool {

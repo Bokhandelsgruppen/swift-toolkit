@@ -58,13 +58,14 @@ public final class AudioParser: PublicationParser {
     private func ignores(_ link: Link) -> Bool {
         let url = URL(fileURLWithPath: link.href)
         let filename = url.lastPathComponent
+        let fileExtension = url.pathExtension.lowercased()
         let allowedExtensions = ["asx", "bio", "m3u", "m3u8", "pla", "pls", "smil", "txt", "vlc", "wpl", "xspf", "zpl"]
         let ignoredFileExtensions = ["pdf"]
         
-        return allowedExtensions.contains(url.pathExtension.lowercased())
-        || ignoredFileExtensions.contains(url.pathExtension.lowercased())
-        || filename.hasPrefix(".")
-        || filename == "Thumbs.db"
+        return allowedExtensions.contains(fileExtension)
+            || ignoredFileExtensions.contains(fileExtension) // For archives containing PDF files.
+            || filename.hasPrefix(".")
+            || filename == "Thumbs.db"
     }
     
     @available(*, unavailable, message: "Not supported for `AudioParser`")
